@@ -71,27 +71,6 @@ masquerade@masquerade-ThinkPad-E16-Gen-2:~/Desktop/oop_tema2$ ./program
 
 ```
 
-La executie, noul `main` implementeaza un meniu de consola care ofera atat varianta de rulare hardcodata pentru testare, cat si posibilitatea unei interactiuni complete cu sistemul:
-
-```text
-=======================================
-      SISTEM GESTIUNE SĂLI ARCADE      
-=======================================
-1. Rulare standard (Simulare hardcodata)
-2. Creeaza si gestioneaza propria sala (Meniu Interactiv)
-0. Inchide programul
--> Alege o optiune: 
-
-```
-
-**Exemplu de interceptare a erorilor sablon (Template Output):**
-
-```text
---- Verificare Exceptii (Afisare Templatizata) ---
-Prins: [Maintenance] Premium Cyberpunk VR necesita igienizare inainte de utilizare. | [Date interne eroare: 3]
-Prins: [Token Error] Lipsa jetoane Cursa. | [Date interne eroare: 6]
-
-```
 
 ```
 
