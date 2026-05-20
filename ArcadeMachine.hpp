@@ -15,29 +15,24 @@ private:
     int condition; 
 
     static int totalMachinesCreated; 
-    static int globalArcadeRevenue;
 
 protected:
-    //interfata pentru afisare
     virtual void printImpl(std::ostream& os) const = 0;
-    
     void degradeCondition(int amount);
     void addRevenue(int amount);
 
 public:
     ArcadeMachine(const std::string& n, int cost);
     virtual ~ArcadeMachine();
+    virtual ArcadeMachine* clone() const = 0; 
 
-    // Constructorul virtual
-    virtual ArcadeMachine* clone() const = 0;
-
-    // afisare
     void print(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const ArcadeMachine& machine);
 
     virtual void startGame(int playerTokens) = 0;
     virtual void endGame() = 0;
-        virtual void performMaintenance();
+    virtual void performMaintenance();
+    
     bool isOccupied() const;
     int getCost() const;
     std::string getName() const;
@@ -49,7 +44,6 @@ public:
     static int getGlobalRevenue();
 };
 
-//retrocabinet
 class RetroCabinet : public ArcadeMachine {
 private:
     std::string gameType;
@@ -69,7 +63,6 @@ protected:
     void printImpl(std::ostream& os) const override;
 };
 
-//VRStation
 class VRStation : public ArcadeMachine {
 private:
     int minAgeRequired;
@@ -89,7 +82,6 @@ protected:
     void printImpl(std::ostream& os) const override;
 };
 
-//simulator racing
 class RacingSimulator : public ArcadeMachine {
 private:
     bool hasMotionSeat;
@@ -108,4 +100,19 @@ protected:
     void printImpl(std::ostream& os) const override;
 };
 
-#endif 
+class RacingSimulatorBuilder {
+private:
+    std::string name = "Generic Racing Simulator";
+    int cost = 5;
+    bool motionSeat = false;
+public:
+    RacingSimulatorBuilder& setName(const std::string& n) { name = n; return *this; }
+    RacingSimulatorBuilder& setCost(int c) { cost = c; return *this; }
+    RacingSimulatorBuilder& enableMotionSeat(bool motion) { motionSeat = motion; return *this; }
+    
+    RacingSimulator build() {
+        return RacingSimulator(name, cost, motionSeat);
+    }
+};
+
+#endif

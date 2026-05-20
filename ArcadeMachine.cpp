@@ -1,15 +1,15 @@
 #include "ArcadeMachine.hpp"
+#include "ArcadeBank.hpp" 
 
 int ArcadeMachine::totalMachinesCreated = 0;
-int ArcadeMachine::globalArcadeRevenue = 0;
 
 ArcadeMachine::ArcadeMachine(const std::string& n, int cost) 
     : name(n), costPerPlay(cost), occupied(false), revenue(0), condition(100) {
     if (cost < 0) {
-        throw InvalidConfigurationException("Costul nu poate fi negativ: " + n);
+        throw InvalidConfigurationException("Costul nu poate fi negativ: ", n);
     }
     totalMachinesCreated++;
-    id = totalMachinesCreated; // Generare ID 
+    id = totalMachinesCreated; 
 }
 
 ArcadeMachine::~ArcadeMachine() {
@@ -23,7 +23,7 @@ void ArcadeMachine::degradeCondition(int amount) {
 
 void ArcadeMachine::addRevenue(int amount) {
     revenue += amount;
-    globalArcadeRevenue += amount;
+    ArcadeBank::getInstance().addRevenue(amount);
 }
 
 void ArcadeMachine::print(std::ostream& os) const {
@@ -50,9 +50,11 @@ int ArcadeMachine::getRevenue() const { return revenue; }
 void ArcadeMachine::setOccupiedStatus(bool status) { occupied = status; }
 
 int ArcadeMachine::getTotalMachines() { return totalMachinesCreated; }
-int ArcadeMachine::getGlobalRevenue() { return globalArcadeRevenue; }
 
-//Implementare retrocabinet
+int ArcadeMachine::getGlobalRevenue() { 
+    return ArcadeBank::getInstance().getGlobalRevenue(); 
+}
+
 RetroCabinet::RetroCabinet(const std::string& n, int cost, const std::string& type)
     : ArcadeMachine(n, cost), gameType(type), currentHighScore(0), crtScreenFlickering(false) {}
 
@@ -61,13 +63,13 @@ ArcadeMachine* RetroCabinet::clone() const {
 }
 
 void RetroCabinet::startGame(int playerTokens) {
-    if (getCondition() < 15) throw NeedsMaintenanceException(getName() + " necesita reparatii.");
-    if (isOccupied()) throw MachineOccupiedException(getName() + " are deja un jucator.");
-    if (playerTokens < getCost()) throw InsufficientTokensException("Prea putine jetoane pentru retrocabinet!!");
+    if (getCondition() < 15) throw NeedsMaintenanceException(getName() + " necesita reparatii.", getCondition());
+    if (isOccupied()) throw MachineOccupiedException(getName() + " are deja un jucator.", getName());
+    if (playerTokens < getCost()) throw InsufficientTokensException("Prea putine jetoane pentru retrocabinet!!", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
-    degradeCondition(5); // Jocurile retro se uzeaza mai incet
+    degradeCondition(5);
     
     if (getCondition() < 30) crtScreenFlickering = true;
     
@@ -97,11 +99,10 @@ void RetroCabinet::printImpl(std::ostream& os) const {
     os << "Retro Cabinet [" << getName() << "] | Genul: " << gameType << " | HighScore: " << currentHighScore;
 }
 
-//Implementare VRStation
 VRStation::VRStation(const std::string& n, int cost, int age)
     : ArcadeMachine(n, cost), minAgeRequired(age), needsCleaning(false), sessionsSinceLastClean(0) {
     if (age <= 0 || age > 100) {
-        throw InvalidConfigurationException("Varsta aparat VR invalida.");
+        throw InvalidConfigurationException("Varsta aparat VR invalida.", std::to_string(age));
     }
 }
 
@@ -110,17 +111,17 @@ ArcadeMachine* VRStation::clone() const {
 }
 
 void VRStation::startGame(int playerTokens) {
-    if (needsCleaning) throw NeedsMaintenanceException(getName() + " necesita igienizare inainte de utilizare.");
-    if (getCondition() < 20) throw NeedsMaintenanceException(getName() + " are erori de tracking.");
-    if (isOccupied()) throw MachineOccupiedException(getName() + " este utilizat in VR.");
-    if (playerTokens < getCost()) throw InsufficientTokensException("Fonduri insuficiente pentru VR Station.");
+    if (needsCleaning) throw NeedsMaintenanceException(getName() + " necesita igienizare inainte de utilizare.", sessionsSinceLastClean);
+    if (getCondition() < 20) throw NeedsMaintenanceException(getName() + " are erori de tracking.", getCondition());
+    if (isOccupied()) throw MachineOccupiedException(getName() + " este utilizat in VR.", getName());
+    if (playerTokens < getCost()) throw InsufficientTokensException("Fonduri insuficiente pentru VR Station.", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
-    degradeCondition(10); // Senzorii VR se uzeaza mai repede
+    degradeCondition(10); 
     sessionsSinceLastClean++;
     
-    if (sessionsSinceLastClean >= 3) needsCleaning = true; // Dupa 3 jocuri trebuie sters
+    if (sessionsSinceLastClean >= 3) needsCleaning = true; 
     
     std::cout << "[VR] START: Calibrare headset " << getName() << "...\n";
 }
@@ -146,7 +147,6 @@ void VRStation::printImpl(std::ostream& os) const {
     os << "VR Station [" << getName() << "] | Varsta min: " << minAgeRequired << " | Necesita curatare: " << (needsCleaning ? "Da" : "Nu");
 }
 
-//Implementare RacingSimulator 
 RacingSimulator::RacingSimulator(const std::string& n, int cost, bool motion)
     : ArcadeMachine(n, cost), hasMotionSeat(motion), tireWearSimulation(0) {}
 
@@ -155,14 +155,14 @@ ArcadeMachine* RacingSimulator::clone() const {
 }
 
 void RacingSimulator::startGame(int playerTokens) {
-    if (getCondition() < 10) throw NeedsMaintenanceException(getName() + " sistem hidraulic blocat.");
-    if (isOccupied()) throw MachineOccupiedException(getName() + " cursa in desfasurare.");
-    if (playerTokens < getCost()) throw InsufficientTokensException("Lipsa jetoane Cursa.");
+    if (getCondition() < 10) throw NeedsMaintenanceException(getName() + " sistem hidraulic blocat.", getCondition());
+    if (isOccupied()) throw MachineOccupiedException(getName() + " cursa in desfasurare.", getName());
+    if (playerTokens < getCost()) throw InsufficientTokensException("Lipsa jetoane Cursa.", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
     degradeCondition(8);
-    tireWearSimulation += 25; // Anvelopele virtuale se uzeaza
+    tireWearSimulation += 25; 
     
     std::cout << "[Racing] START: Motor dat drumul la " << getName() << ".\n";
     if (hasMotionSeat) std::cout << "   Scaunul este activ\n";

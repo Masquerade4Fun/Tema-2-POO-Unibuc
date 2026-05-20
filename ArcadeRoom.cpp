@@ -28,7 +28,6 @@ void ArcadeRoom::attemptPlay(size_t index, int tokens) {
         std::cout << "Index aparat invalid.\n";
         return;
     }
-    //StartGame 
     machines[index]->startGame(tokens);
 }
 
@@ -45,7 +44,7 @@ void ArcadeRoom::resolveSpecialMaintenance() {
             std::cout << "Se repara aparatul: " << machine->getName() << "\n";
             machine->performMaintenance();
         }
-                VRStation* vr = dynamic_cast<VRStation*>(machine);
+        VRStation* vr = dynamic_cast<VRStation*>(machine);
         if (vr != nullptr) {
             std::cout << "Verificare VR: ";
             vr->sanitizeHeadset();
@@ -56,7 +55,6 @@ void ArcadeRoom::resolveSpecialMaintenance() {
 void ArcadeRoom::viewRacingTelemetry() const {
     std::cout << "\n Simulatoare Auto \n";
     for (const auto& machine : machines) {
-        // DOWNCAST la const
         const RacingSimulator* racingSim = dynamic_cast<const RacingSimulator*>(machine);
         if (racingSim != nullptr) {
             racingSim->runDiagnostics();
