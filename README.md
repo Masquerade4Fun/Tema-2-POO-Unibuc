@@ -57,8 +57,6 @@ In privinta gestiunii veniturilor, am aplicat **Principiul Single Responsibility
 
 Arhitectura de exceptii regasita in fisierul Exceptions a fost transformata folosind programarea generica. `ArcadeException<T>` este acum o **clasa sablon (template)**, ce contine un atribut generic `errorData` de tip `T` si o metoda dependenta de acesta. Astfel, erorile pot transporta la pachet date esentiale foarte specifice (ex: de tip `int` pentru jetoane lipsa sau `std::string` pentru numele masinariei blocate). Pentru o afisare cat mai eleganta si naturala a acestor erori complexe, clasa dispune de o **functie externa friend template** care supraincarca operatorul `<<`. Toate aceste exceptii sunt interceptate eficient in blocuri `try-catch` in meniul interactiv din main.
 
-Nu in ultimul rand, am respectat regula utilizarii constante (const correctness), marcand cu const la final absolut orice functie care doar citeste date, asigurand astfel compilatorul ca starea obiectului nu va fi modificata din greseala.
-
 ---
 
 ## Rulare si Output
