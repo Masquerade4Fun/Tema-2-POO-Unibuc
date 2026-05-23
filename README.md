@@ -29,11 +29,11 @@ In proiect sunt folosite atat concepte de baza, cat si avansate:
 * copiere polimorfica prin clone()
 * suprascrierea constructorului de copiere si a operatorului de atribuire (Copy and Swap idiom)
 * dynamic_cast pentru downcast cu sens
-* **[Nou]** clase sablon (template) si atribute dependente de un tip `T`
-* **[Nou]** functii externe friend template
-* **[Nou]** variadic templates si fold expressions (C++17)
-* **[Nou]** principii SOLID (Single Responsibility Principle)
-* **[Nou]** design patterns (Singleton, Factory, Builder, Prototype)
+* clase sablon (template) si atribute dependente de un tip `T`
+* functii externe friend template
+* variadic templates si fold expressions (C++17)
+* principii SOLID (Single Responsibility Principle)
+* design patterns (Singleton, Factory, Builder, Prototype)
 * exceptii proprii (inclusiv throw in constructor)
 * try / catch
 * membri si metode statice
