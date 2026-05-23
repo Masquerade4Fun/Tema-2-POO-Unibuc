@@ -2,15 +2,18 @@
 #define MACHINE_FACTORY_HPP
 
 #include "ArcadeMachine.hpp"
+#include "ArcadeServices.hpp"
 
 class MachineFactory {
 public:
     static RetroCabinet createPacmanRetro() {
-        return RetroCabinet("Pac-Man Classic", 2, "Arcade");
+        const RetroPreset& preset = MachinePresetCatalog::getInstance().getPacmanRetro();
+        return RetroCabinet(preset.name, preset.cost, preset.genre);
     }
     
     static VRStation createPremiumVR() {
-        return VRStation("Premium Cyberpunk VR", 20, 16);
+        const VRPreset& preset = MachinePresetCatalog::getInstance().getPremiumVR();
+        return VRStation(preset.name, preset.cost, preset.minAge);
     }
 };
 

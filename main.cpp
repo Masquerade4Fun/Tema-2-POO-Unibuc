@@ -67,7 +67,7 @@ void runStandardSimulation() {
 
     } 
     catch (const std::exception& e) {
-        std::cout << "[Fatal Err]: " << e.what() << "\n";
+        std::cout << "[ Err]: " << e.what() << "\n";
     }
 }
 

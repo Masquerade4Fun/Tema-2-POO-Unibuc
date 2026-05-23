@@ -1,4 +1,5 @@
 #include "ArcadeRoom.hpp"
+#include "ArcadeServices.hpp"
 
 ArcadeRoom::ArcadeRoom(const ArcadeRoom& other) {
     for (const auto& machine : other.machines) {
@@ -38,14 +39,20 @@ void ArcadeRoom::endPlay(size_t index) {
 }
 
 void ArcadeRoom::resolveSpecialMaintenance() {
+    const ArcadePolicy& policy = ArcadePolicy::getInstance();
+    MaintenanceLedger& ledger = MaintenanceLedger::getInstance();
+
     std::cout << "\n Procedura Mentenanta si Igienizare \n";
     for (auto& machine : machines) {
-        if (machine->getCondition() < 50) {
+        ledger.noteInspection();
+        if (machine->getCondition() < policy.getRoomMaintenanceThreshold()) {
+            ledger.noteRepair();
             std::cout << "Se repara aparatul: " << machine->getName() << "\n";
             machine->performMaintenance();
         }
         VRStation* vr = dynamic_cast<VRStation*>(machine);
         if (vr != nullptr) {
+            ledger.noteSanitization();
             std::cout << "Verificare VR: ";
             vr->sanitizeHeadset();
         }

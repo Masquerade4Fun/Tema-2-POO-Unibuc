@@ -12,12 +12,12 @@ template <typename T>
 class ArcadeException : public std::exception {
 protected:
     std::string message;
-    T errorData; 
+    T errorData;  // de ex: -> token , sau alte exceptii daca este apartul blocat in curs de reparatii
 public:
     ArcadeException(const std::string& msg, T data) : message(msg), errorData(data) {}
     
     const char* what() const noexcept override {
-        return message.c_str();
+        return message.c_str(); //ptr la arr
     }
         T getErrorData() const { 
         return errorData; 

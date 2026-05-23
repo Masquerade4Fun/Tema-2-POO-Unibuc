@@ -11,16 +11,16 @@ private:
     std::vector<ArcadeMachine*> machines; 
 
 public:
-    ArcadeRoom() = default;
+    ArcadeRoom() = default; // poate fi o sala goala
     ArcadeRoom(const ArcadeRoom& other);
     friend void swap(ArcadeRoom& first, ArcadeRoom& second) noexcept;
     ArcadeRoom& operator=(ArcadeRoom other);
     ~ArcadeRoom();
 
     void addMachine(const ArcadeMachine& machine);
-        template <typename... Args>
+    template <typename... Args>//inf arg
     void addMachines(Args&&... machinesArgs) {
-        (addMachine(std::forward<Args>(machinesArgs)), ...);
+        (addMachine(std::forward<Args>(machinesArgs)), ...); //apel addMachine automat
     }
     
     void attemptPlay(size_t index, int tokens);

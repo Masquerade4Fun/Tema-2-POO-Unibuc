@@ -1,5 +1,6 @@
 #include "ArcadeMachine.hpp"
 #include "ArcadeBank.hpp" 
+#include "ArcadeServices.hpp"
 
 int ArcadeMachine::totalMachinesCreated = 0;
 
@@ -63,15 +64,17 @@ ArcadeMachine* RetroCabinet::clone() const {
 }
 
 void RetroCabinet::startGame(int playerTokens) {
-    if (getCondition() < 15) throw NeedsMaintenanceException(getName() + " necesita reparatii.", getCondition());
+    const ArcadePolicy& policy = ArcadePolicy::getInstance();
+
+    if (getCondition() < policy.getRetroMinCondition()) throw NeedsMaintenanceException(getName() + " necesita reparatii.", getCondition());
     if (isOccupied()) throw MachineOccupiedException(getName() + " are deja un jucator.", getName());
     if (playerTokens < getCost()) throw InsufficientTokensException("Prea putine jetoane pentru retrocabinet!!", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
-    degradeCondition(5);
+    degradeCondition(policy.getRetroDegradeStep());
     
-    if (getCondition() < 30) crtScreenFlickering = true;
+    if (getCondition() < policy.getRetroFlickerThreshold()) crtScreenFlickering = true;
     
     std::cout << "[Retro] Start: " << getName() << " Mod " << gameType << ". Insert coin\n";
     if (crtScreenFlickering) std::cout << "   *Avertisment: Ecranul palpaie usor.*\n";
@@ -111,17 +114,19 @@ ArcadeMachine* VRStation::clone() const {
 }
 
 void VRStation::startGame(int playerTokens) {
+    const ArcadePolicy& policy = ArcadePolicy::getInstance();
+
     if (needsCleaning) throw NeedsMaintenanceException(getName() + " necesita igienizare inainte de utilizare.", sessionsSinceLastClean);
-    if (getCondition() < 20) throw NeedsMaintenanceException(getName() + " are erori de tracking.", getCondition());
+    if (getCondition() < policy.getVrMinCondition()) throw NeedsMaintenanceException(getName() + " are erori de tracking.", getCondition());
     if (isOccupied()) throw MachineOccupiedException(getName() + " este utilizat in VR.", getName());
     if (playerTokens < getCost()) throw InsufficientTokensException("Fonduri insuficiente pentru VR Station.", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
-    degradeCondition(10); 
+    degradeCondition(policy.getVrDegradeStep()); 
     sessionsSinceLastClean++;
     
-    if (sessionsSinceLastClean >= 3) needsCleaning = true; 
+    if (sessionsSinceLastClean >= policy.getVrCleaningCycle()) needsCleaning = true; 
     
     std::cout << "[VR] START: Calibrare headset " << getName() << "...\n";
 }
@@ -155,14 +160,16 @@ ArcadeMachine* RacingSimulator::clone() const {
 }
 
 void RacingSimulator::startGame(int playerTokens) {
-    if (getCondition() < 10) throw NeedsMaintenanceException(getName() + " sistem hidraulic blocat.", getCondition());
+    const ArcadePolicy& policy = ArcadePolicy::getInstance();
+
+    if (getCondition() < policy.getRacingMinCondition()) throw NeedsMaintenanceException(getName() + " sistem hidraulic blocat.", getCondition());
     if (isOccupied()) throw MachineOccupiedException(getName() + " cursa in desfasurare.", getName());
     if (playerTokens < getCost()) throw InsufficientTokensException("Lipsa jetoane Cursa.", getCost() - playerTokens);
     
     setOccupiedStatus(true);
     addRevenue(getCost());
-    degradeCondition(8);
-    tireWearSimulation += 25; 
+    degradeCondition(policy.getRacingDegradeStep());
+    tireWearSimulation += policy.getRacingWearStep(); 
     
     std::cout << "[Racing] START: Motor dat drumul la " << getName() << ".\n";
     if (hasMotionSeat) std::cout << "   Scaunul este activ\n";

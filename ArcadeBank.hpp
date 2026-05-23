@@ -4,7 +4,7 @@
 class ArcadeBank {
 private:
     int globalRevenue;
-        ArcadeBank() : globalRevenue(0) {} 
+    ArcadeBank() : globalRevenue(0) {} 
 
 public:
     ArcadeBank(const ArcadeBank&) = delete;
