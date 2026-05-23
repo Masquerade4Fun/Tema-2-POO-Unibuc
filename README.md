@@ -1,5 +1,5 @@
 ```markdown
-# Arcade Room - OOP C++ Project Tema 2-> Actualizata pentru Tema 3
+# Arcade Room - POO C++ Tema 2-> Actualizata pentru Tema 3
 
 ## Structura folosita
 
